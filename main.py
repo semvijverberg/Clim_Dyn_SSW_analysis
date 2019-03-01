@@ -43,7 +43,8 @@ filename_SLP    = 'SLP_1979-2017_01okt_31mar_dt-1days_2.5deg_NH.nc'
 # =============================================================================
 T10hpa = functions.import_dataset(filename_T10hpa, path_data)
 u10hpa = functions.import_dataset(filename_u10hpa, path_data)
-
+all_dates = pd.to_datetime(u10hpa.time.values)
+#%%
 # =============================================================================
 # extract the SSW
 # =============================================================================
@@ -68,7 +69,6 @@ mean_gradient, mask_T_grad_rev = functions.get_T10hpa_reversal(T10hpa) # output 
 
 # When are both of these conditions true?
 # mask_SSW = 
-all_dates = pd.to_datetime(u10hpa.time.values)
 dates_SSW = all_dates.where(mask_SSW).dropna() # plug in a numpy mask of 
                 # booleans where SSWs are True, and non-SSWs are False
 #%%
