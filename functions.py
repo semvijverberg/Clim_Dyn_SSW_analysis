@@ -37,39 +37,7 @@ def import_dataset(filename, path_data):
     return ds
 
 
-def get_T10hpa_reversal(T10hpa):
-    # select latitudes
-    WMO_lats = slice(90,60)
-    T10hpa_lats = T10hpa.sel(latitude=WMO_lats)
-    # take zonal mean
-    T10hpa_zm = T10hpa_lats.mean(dim='longitude')
-    # get reversals
-    T10hpa_zm.to_array().isel(time=0).plot()
-    # calculate gradient with differentiate function of xarray
-    mean_gradient = T10hpa_zm.to_array().diff('latitude').mean('latitude') 
-    # note, the latitudes are order from 90N towards the equator, thus the 
-    # gradient will be positive. To make it more intuitive, i.e. taking the 
-    # perspective from the equator, we multiply times - 1
-    # .squeeze() is done to remove empty dimensions of 1
-    mean_gradient = mean_gradient.squeeze() * -1
-    mask_T_grad_rev = mean_gradient.values > 0.
-    return mean_gradient, mask_T_grad_rev
 
-def get_u10hpa_reversal(u10hpa):
-   
-    # select latitudes
-    WMO_lats = 60
-    u10hpa_lats = u10hpa.sel(latitude=WMO_lats)
-    # take zonal mean
-    u10hpa_zm = u10hpa_lats.mean(dim='longitude')
-    # load in array, .squeeze() is done to remove empty dimensions of 1
-    u10hpa_zm = u10hpa_zm.to_array().squeeze()
-    # plot one year
-    datetime = pd.to_datetime(u10hpa_zm.time.values)
-    u10hpa_zm.sel(time=onewinter(datetime)).plot()
-    # get reversals
-    mask_reversals = u10hpa_zm.values < 0.
-    return u10hpa_zm, mask_reversals
 
 def onewinter(datetime, winter=[1979,1980]):
     year1 = datetime.where(datetime.year==winter[0]).dropna()
